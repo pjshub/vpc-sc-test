@@ -2,7 +2,7 @@ resource "google_folder" "myfolder" {
   display_name = var.prefix
   parent       = "folders/${local.folder_id}"
 }
-
+## main.tf variables are defined in terraform.tfvars, varibales.tf & most importantly01-data.tf
 module "project_factory_a" {
   source  = "terraform-google-modules/project-factory/google"
   version = "~> 14.0"
