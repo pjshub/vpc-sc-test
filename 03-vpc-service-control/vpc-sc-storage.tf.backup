@@ -1,0 +1,119 @@
+# ####### Perimeter B
+
+resource "google_access_context_manager_service_perimeter" "service_perimeter_b" {
+  parent      = "accessPolicies/${local.acx_access_policy}"
+  name        = "accessPolicies/${local.acx_access_policy}/servicePerimeters/${local.perimeter_name_a}"
+  title       = local.perimeter_name_a
+  description = "Test Service perimeter A"
+
+  status {
+    restricted_services = ["bigquery.googleapis.com", "storage.googleapis.com"]
+    resources           = formatlist("projects/%s", [local.a_project_number])
+    access_levels       = formatlist("accessPolicies/${local.acx_access_policy}/accessLevels/%s", [module.access_level_members.name])
+
+    ### Ingress from INTERNET
+
+    ingress_policies {
+
+      ingress_from {
+        identity_type = "ANY_IDENTITY"
+        sources {
+          access_level = "accessPolicies/${local.acx_access_policy}/accessLevels/${module.access_level_members_restricted.name}"
+        }
+        # sources {
+        #   resource = "projects/${local.a_project_number}"
+        # }
+      }
+
+      ingress_to {
+        resources = ["projects/${local.a_project_number}"]
+        operations {
+          service_name = "storage.googleapis.com"
+          method_selectors {
+            method = "google.storage.objects.create"
+          }
+          method_selectors {
+            method = "google.storage.objects.list"
+          }
+          method_selectors {
+            method = "google.storage.buckets.testIamPermissions"
+          }
+          # method_selectors {
+          #   method = "google.storage.objects.get"
+          # }
+        }
+      }
+
+    }
+
+    #### End Ingress from INTERNET
+
+
+
+
+    ## Egress to project B - Copy data from Project B to Project A
+
+    egress_policies {
+
+      egress_from {
+        identity_type = "ANY_IDENTITY"
+      }
+
+      egress_to {
+        resources = ["projects/${local.b_project_number}", ]
+        operations {
+          service_name = "storage.googleapis.com"
+          method_selectors {
+            method = "google.storage.objects.get"
+          }
+          method_selectors {
+            method = "google.storage.objects.list"
+          }
+          method_selectors {
+            method = "google.storage.buckets.testIamPermissions"
+          }
+        }
+      }
+
+    }
+
+    ### End Egress to project B
+
+    #### Ingress from Project C
+
+    # ingress_policies {
+
+    #   ingress_from {
+    #     identity_type = "ANY_IDENTITY"
+    #     sources {
+    #       resource = "projects/${local.c_project_number}"
+    #     }
+    #   }
+
+    #   ingress_to {
+    #     resources = ["*"]
+    #     operations {
+    #       service_name = "storage.googleapis.com"
+    #       method_selectors {
+    #         method = "google.storage.objects.create"
+    #       }
+    #       method_selectors {
+    #         method = "google.storage.objects.list"
+    #       }
+    #       method_selectors {
+    #         method = "google.storage.buckets.testIamPermissions"
+    #       }
+    #     }
+    #   }
+
+    # }
+
+    # #### End Ingress from Project C
+
+
+
+
+  }
+
+
+}

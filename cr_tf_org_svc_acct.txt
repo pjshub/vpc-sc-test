@@ -1,0 +1,254 @@
+gcloud organizations list
+
+export TF_VAR_org_id=<0123455>
+export TF_ADMIN_PROJECT=<your-tf-svc-acct-project>
+export TF_ADMIN_USER=gcp-terraform
+export TF_BUCKET=gcp-<my-tf-bucket>-terraform
+export YOUR_GCP_CLI_USER=<your-google-ldap>@google.com
+
+
+
+gcloud iam service-accounts create ${TF_ADMIN_USER} \
+  --display-name "Service account for Terraform Admin" --project ${TF_ADMIN_PROJECT}
+
+
+
+gcloud services enable accesscontextmanager.googleapis.com
+gcloud services enable bigquery.googleapis.com            
+gcloud services enable bigquerystorage.googleapis.com     
+gcloud services enable cloudapis.googleapis.com           
+gcloud services enable cloudbilling.googleapis.com        
+gcloud services enable clouddebugger.googleapis.com       
+gcloud services enable cloudresourcemanager.googleapis.com
+gcloud services enable cloudtrace.googleapis.com          
+gcloud services enable compute.googleapis.com             
+gcloud services enable container.googleapis.com           
+gcloud services enable containerregistry.googleapis.com   
+gcloud services enable dataflow.googleapis.com            
+gcloud services enable datastore.googleapis.com           
+gcloud services enable deploymentmanager.googleapis.com   
+gcloud services enable dns.googleapis.com                 
+gcloud services enable firebaserules.googleapis.com       
+gcloud services enable firestore.googleapis.com           
+gcloud services enable iam.googleapis.com                 
+gcloud services enable iamcredentials.googleapis.com      
+gcloud services enable logging.googleapis.com             
+gcloud services enable monitoring.googleapis.com          
+gcloud services enable oslogin.googleapis.com             
+gcloud services enable pubsub.googleapis.com              
+gcloud services enable resourceviews.googleapis.com       
+gcloud services enable servicemanagement.googleapis.com   
+gcloud services enable servicenetworking.googleapis.com   
+gcloud services enable serviceusage.googleapis.com        
+gcloud services enable sql-component.googleapis.com       
+gcloud services enable sqladmin.googleapis.com            
+gcloud services enable storage-api.googleapis.com         
+gcloud services enable storage-component.googleapis.com   
+gcloud services enable billingbudgets.googleapis.com
+gcloud services enable essentialcontacts.googleapis.com
+gcloud services enable cloudasset.googleapis.com
+gcloud services enable certificatemanager.googleapis.com
+gcloud services enable publicca.googleapis.com
+gcloud services enable networkservices.googleapis.com
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/resourcemanager.projectCreator
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/resourcemanager.projectDeleter
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/accesscontextmanager.policyAdmin
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/billing.user
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/billing.viewer
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/compute.admin
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/iam.organizationRoleAdmin
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/iam.serviceAccountAdmin
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/iam.serviceAccountUser
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/logging.configWriter
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/orgpolicy.policyAdmin
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/resourcemanager.folderAdmin
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/resourcemanager.organizationViewer
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/iam.securityAdmin
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/storage.admin
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/dataflow.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/cloudsql.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/gkehub.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/cloudkms.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/cloudkms.cryptoOperator
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/binaryauthorization.attestorsAdmin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/binaryauthorization.policyAdmin
+
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/monitoring.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/secretmanager.admin
+
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/container.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/source.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/containeranalysis.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/artifactregistry.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/essentialcontacts.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/composer.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/cloudbuild.workerPoolOwner
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/cloudasset.owner
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/serviceusage.serviceUsageConsumer
+
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/pubsub.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/servicedirectory.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/dns.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/accesscontextmanager.gcpAccessAdmin
+
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/certificatemanager.owner
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/servicenetworking.networksAdmin
+
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/networkconnectivity.hubAdmin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/resourcemanager.tagAdmin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/resourcemanager.tagUser
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/publicca.externalAccountKeyCreator
+
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/alloydb.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/osconfig.osPolicyAssignmentAdmin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/resourcemanager.organizationAdmin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/recaptchaenterprise.admin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/serviceusage.serviceUsageAdmin
+
+gcloud organizations add-iam-policy-binding ${TF_VAR_org_id} \
+  --member serviceAccount:${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --role roles/securitycenter.notificationConfigEditor
+
+
+
+
+gsutil mb -l us-east4 -p ${TF_ADMIN_PROJECT} gs://${TF_BUCKET}
+
+gsutil versioning set on gs://${TF_BUCKET}
+
+gcloud iam service-accounts add-iam-policy-binding ${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --member user:${YOUR_GCP_CLI_USER} \
+  --role roles/iam.serviceAccountTokenCreator
+
+gcloud iam service-accounts add-iam-policy-binding ${TF_ADMIN_USER}@${TF_ADMIN_PROJECT}.iam.gserviceaccount.com \
+  --member user:${YOUR_GCP_CLI_USER} \
+  --role roles/iam.serviceAccountUser

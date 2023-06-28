@@ -1,0 +1,201 @@
+####### Perimeter B
+
+resource "google_access_context_manager_service_perimeter" "service_perimeter_b" {
+  parent      = "accessPolicies/${local.acx_access_policy}"
+  name        = "accessPolicies/${local.acx_access_policy}/servicePerimeters/${local.perimeter_name_c}"
+  title       = local.perimeter_name_c
+  description = "Test Service perimeter C"
+
+  status {
+    restricted_services = ["bigquery.googleapis.com", "storage.googleapis.com"]
+    resources           = ["projects/${local.c_project_number}"]
+    access_levels       = formatlist("accessPolicies/${local.acx_access_policy}/accessLevels/%s", module.access_level_members.name)
+
+####### Scenario 1: Allows query tables in Project C From Project A ( A --> C)
+
+    ingress_policies {
+
+      ingress_from {
+        identity_type = "ANY_IDENTITY"
+        sources {
+          resource = "projects/${local.a_project_number}"
+        }
+      }
+
+      ingress_to {
+        # resources = ["*"]
+        resources = ["projects/${local.c_project_number}"] #Project ID: projects/sinprj
+        operations {
+          # service_name = "*"
+          service_name = "bigquery.googleapis.com"
+          method_selectors {
+            permission = "bigquery.datasets.get"
+          }
+          method_selectors {
+            permission = "bigquery.tables.list"
+          }
+          method_selectors {
+            permission = "bigquery.tables.get"
+          }
+          method_selectors {
+            permission = "bigquery.tables.getData"
+          }
+        }
+      }
+
+    }
+
+    # Allow BQ jobs to execute in project A
+    egress_policies {
+      egress_from {
+        identity_type = "ANY_IDENTITY"
+      }
+      egress_to {
+        resources = ["projects/${local.a_project_number}", ]
+        operations {
+          service_name = "bigquery.googleapis.com"
+          method_selectors {
+            permission = "bigquery.jobs.create"
+          }
+        }
+      }
+    }
+
+
+
+####### Scenario 2:  allow query from internet to project C using project B as BQ job project (Internet --> Project C)
+
+    ingress_policies {
+      ingress_from {
+        identity_type = "ANY_IDENTITY"
+        sources {
+          access_level = "accessPolicies/${local.acx_access_policy}/accessLevels/${module.access_level_members_restricted.name}"
+        }
+      }
+
+      ingress_to {
+        resources = ["projects/${local.c_project_number}"] ##["*"]
+        operations {
+          ## Allows query tables in Project C
+          service_name = "bigquery.googleapis.com"
+          method_selectors {
+            permission = "bigquery.datasets.get"
+          }
+          method_selectors {
+            permission = "bigquery.tables.list"
+          }
+          method_selectors {
+            permission = "bigquery.tables.get"
+          }
+          method_selectors {
+            permission = "bigquery.tables.getData"
+          }
+        }
+      }
+    }
+
+    # Allow BQ jobs to execute in project B
+    egress_policies {
+      egress_from {
+        identity_type = "ANY_IDENTITY"
+      }
+      egress_to {
+        resources = ["projects/${local.b_project_number}", ]
+        operations {
+          service_name = "bigquery.googleapis.com"
+          method_selectors {
+            permission = "bigquery.jobs.create"
+          }
+        }
+      }
+    }
+
+
+
+
+    ####### Scenario 3:  allows query project tables in project B from project C ( C --> B)
+
+    egress_policies {
+      egress_from {
+        identity_type = "ANY_IDENTITY"
+      }
+      egress_to {
+        resources = ["projects/${local.b_project_number}", ]
+        operations {
+          service_name = "bigquery.googleapis.com"
+          method_selectors {
+            permission = "bigquery.datasets.get"
+          }
+          method_selectors {
+            permission = "bigquery.tables.list"
+          }
+          method_selectors {
+            permission = "bigquery.tables.get"
+          }
+          method_selectors {
+            permission = "bigquery.tables.getData"
+          }
+        }
+      }
+    }
+
+    ingress_policies {
+
+      ingress_from {
+        identity_type = "ANY_IDENTITY"
+        sources {
+          resource = "projects/${local.b_project_number}"
+        }
+      }
+
+      ingress_to {
+        resources = ["projects/${local.c_project_number}"] ##["*"]
+        operations {
+          service_name = "bigquery.googleapis.com"
+          method_selectors {
+            permission = "bigquery.jobs.create"
+          }
+        }
+      }
+
+    }
+
+
+
+##### Scenario 4:  GCS Ingress from Project A
+
+    ingress_policies {
+
+      ingress_from {
+        identity_type = "ANY_IDENTITY"
+        sources {
+          resource = "projects/${local.a_project_number}"
+        }
+      }
+
+      ingress_to {
+        resources = ["projects/${local.c_project_number}"] ##["*"]
+        operations {
+          service_name = "storage.googleapis.com"
+          method_selectors {
+            method = "google.storage.objects.create"
+          }
+          method_selectors {
+            method = "google.storage.objects.list"
+          }
+          method_selectors {
+            method = "google.storage.buckets.testIamPermissions"
+          }
+        }
+      }
+
+    }
+
+###########################
+
+  }
+
+  # lifecycle {
+  #   ignore_changes = [status[0].resources]
+  # }
+}
