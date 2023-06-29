@@ -1,6 +1,3 @@
-# vpc-sc-test
-vpc service controls tests
-
 # vpc-sc-test - PJ's VPC SC test  playground
 
 Multiple Ways to Autheticate 
