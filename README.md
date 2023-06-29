@@ -22,6 +22,5 @@ NOTE: Here vpcsc-fr1 is the feature branch name
 6.  git push origin vpcsc-fr1 -- This will push the code to feature branch remote server
 7.  git checkout main -- This is required to merge the feature branch to main
 8.  git merge vpcsc-fr1 -- This will merge (link) feature branch to main branch
-9.  git push origin vpcsc-fr1 -- This will commit the code   
-10.  < Now your Feature Branch and Main branch are out of sync on remote server>
-11. git push origin main -- This will sync the code between the 2 branches on the remote server
+9.  < Now your Feature Branch and Main branch are out of sync on remote server>
+10. git push origin main -- This will sync the code between the 2 branches on the remote server
