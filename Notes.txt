@@ -1,2 +1,3 @@
 # vpc-sc-test - PJ's VPC SC test  playground
-#New Line
+# New Line
+# Adding a new line to check which branch should be checked out before pushing new changes to the main branch
